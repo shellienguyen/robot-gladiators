@@ -25,7 +25,8 @@ PSEUDOCODES 2:
    - If any other invalid option, call shop() again
 */
 
-/* PSEUDOCODES 3 for randomly chooses which player to start
+/*
+PSEUDOCODES 3 for randomly chooses which player to start
 - If it is the player-robot's turn:
    - Prompt the fight or skip request
    - Remove damage from enemy-robot's health
@@ -36,6 +37,19 @@ PSEUDOCODES 2:
 - If after the turn is done, switch turns for the next bout of fighting:
    - If the player-robot went first, run the logic for the enemy-robot attacking the player-robot
    - If the enemy-robot went first, run the logic for the player-robot attacking the enemy-robot
+*/
+
+/*
+PSEUDOCODES 4 - for tracking high scores
+- When the game has ended and we have survived facing all the robots:
+   - Retrieve the current high score from local storage
+   - Compare the player robot score with the current high score
+   - If the current high score is higher:
+      - Send the player a message that the player did not beat the high score
+   - If the player's score is higher:
+      - Set the new high score object into localStorage
+      - Set the new player-robot's name object into localStorage
+      - Send the player a message that they beat the high score
 */
 
 // Function to generate a random numeric value
@@ -152,7 +166,7 @@ var fight = function( enemy ) {
 
    // Repeat and execute as long as the enemy-robot is alive
    while(( enemy.health > 0 ) && ( playerInfo.health > 0 )) {
-      console.log( "turn is: " + isPlayerTurn );
+
       if ( isPlayerTurn ) {
          if ( playerSkips() ) {
             // If true, leave fight by break loop
@@ -255,11 +269,23 @@ var startGame = function() {
 
 // Function to end the entire game
 var endGame = function() {
-   if ( playerInfo.health > 0 ) {
-      window.alert( "Great job, you have survived the game!  You now have a score of " + playerInfo.money + "." );
+   window.alert( "The game has now ended.  Let's see how you did!" );
+
+   // Check the localStorage for high score, if it's not there, use 0
+   var highScore = localStorage.getItem( "highscore" );
+   if ( highScore === null ) {
+      highScore = 0;
+   };
+
+   // If the player has more money than the high score, the player has a new high score
+   if ( playerInfo.money > highScore ) {
+      localStorage.setItem( "highscore", playerInfo.money );
+      localStorage.setItem( "name", playerInfo.name );
+
+      alert( playerInfo.name + " now has the high score of " + playerInfo.money + "!" );
    }
    else {
-      window.alert( "You have lost your robot in the battle." );
+      alert( playerInfo.name + " did not beat the high score of " + highScore + ".  Maybe next time!" );
    };
 
    // Ask whether the player would like to play again
